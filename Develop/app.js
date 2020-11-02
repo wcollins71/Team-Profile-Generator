@@ -10,26 +10,121 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const staffArray = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
+function createManager() {
+    inquirer.prompt([{
+        message: "What is your manager's name?",
+        name: "managerName"
+    },
+    {
+        message: "What is your manager's id?",
+        name: "managerId"
+    },
+    {
+        message: "What is your manager's email?",
+        name: "managerEmail"
+    },
+    {
+        message: "What is your manager's office number?",
+        name: "managerNumber"
+    },
+    ])
+        .then(function (response) {
+            manager = new Manager(response.managerName, response.managerId, response.managerEmail, response.managerNumber)
+            staffArray.push(manager);
+            selectRole()
+        });
+}
 
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
+function selectRole() {
+    inquirer.prompt({
+        type: "list",
+        message: "Which type of manager would you like to add?",
+        choices: [
+            "Engineer",
+            "Intern",
+            "I don't want to add any more team members"
+        ],
+        name: "staffRole"
+    })
+        .then((selectedRole) => {
+            if (selectedRole.staffRole === "Engineer") {
+                createEngineer();
+            } else if (selectedRole.staffRole === "Intern") {
+                createIntern();
+            } else {
+                createHTML();
+            };
 
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
+        });
+};
 
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
+function createEngineer() {
+    inquirer.prompt([{
+        message: "What is your engineer's name?",
+        name: "engineerName"
+    },
+    {
+        message: "What is your engineer's id?",
+        name: "engineerId"
+    },
+    {
+        message: "What is your engineer's email?",
+        name: "engineerEmail"
+    },
+    {
+        message: "What is your engineer's GitHub username?",
+        name: "engineerGitHub"
+    },
+    ])
+        .then(function (response) {
+            engineer = new Engineer(response.engineerName, response.engineerId, response.engineerEmail, response.engineerGitHub);
+            staffArray.push(engineer);
+            selectRole()
+        });
+};
+
+function createIntern() {
+    inquirer.prompt([{
+        message: "What is your intern's name?",
+        name: "internName"
+    },
+    {
+        message: "What is your intern's id?",
+        name: "internId"
+    },
+    {
+        message: "What is your intern's email?",
+        name: "internEmail"
+    },
+    {
+        message: "What is your intern's school?",
+        name: "internSchool"
+    },
+    ])
+
+        .then((response) => {
+            intern = new Intern(response.internName, response.internId, response.internEmail, response.internSchool);
+            staffArray.push(intern);
+            selectRole();
+        });
+}
+
+async function createHTML() {
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdirSync(OUTPUT_DIR);
+    }
+    fs.copyFile(`templates/style.css`, `${OUTPUT_DIR}/style.css`, (err) => {
+        if (err) throw err;
+    });
+    const renderStaff = render(staffArray);
+    fs.writeFileSync(outputPath, renderStaff);
+    console.log(`HTML page created ${OUTPUT_DIR}/team.html`)
+}
+
+createManager();
+
