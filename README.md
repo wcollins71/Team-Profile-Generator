@@ -12,8 +12,8 @@ You are required to submit the following:
 
 * A video demonstrating the entirety of the app's functionality 
 
-![Test run](./assets/npm-run-test.png)
-![Video demonstration](./assets/run-through.gif)
+![Test run](./Assets/npm-run-test.png)
+![Video demonstration](./Assets/run-through.gif)
 
 - - -
 © 2019 Trilogy Education Services, a 2U, Inc. brand. All Rights Reserved.
